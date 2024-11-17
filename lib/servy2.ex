@@ -90,8 +90,8 @@ defmodule Servy2.Handler do
 
   def route(%Conv{ method: "POST", path: "/bears"} = conv) do
     # %{conv | status: 201, resp_body: "Created a #{conv.params["type"]} bear named #{conv.params["name"]}!"}\
-    IO.inspect(conv)
-    IO.inspect(BearController.create(conv, conv.params))
+    # IO.inspect(conv)
+    BearController.create(conv, conv.params)
   end
 
   def route(%Conv{method: "GET", path: "/about"} = conv) do
@@ -149,7 +149,7 @@ defmodule Servy2.Handler do
   # end
 
   def format_response(%Conv{} = conv) do
-    IO.inspect(conv)
+    # IO.inspect(conv)
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
     Content-Type: text/html\r
