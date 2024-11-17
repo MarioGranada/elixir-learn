@@ -58,6 +58,11 @@ defmodule Servy2.Handler do
     %{conv | status: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
+  def route(%Conv{ method: "GET", path: "/api/bears"} = conv) do
+    # %{conv | status: 200, resp_body: "Teddy, Smokey, Paddington"}
+    Servy.Api.BearController.index(conv)
+  end
+
   def route(%Conv{ method: "GET", path: "/bears"} = conv) do
     # %{conv | status: 200, resp_body: "Teddy, Smokey, Paddington"}
     BearController.index(conv)
@@ -68,8 +73,6 @@ defmodule Servy2.Handler do
     # %{conv | status: 200, resp_body: "Bear #{id}"}
     BearController.show(conv, params)
   end
-
-
 
   def route(%Conv{ method: "GET", path: "/bears/new"} = conv) do
     # %{conv | status: 200, resp_body: ""}
@@ -85,8 +88,6 @@ defmodule Servy2.Handler do
   def route(%Conv{ method: "DELETE", path: "/bears/" <> id} = conv) do
     %{conv | status: 200, resp_body: "Deleting bear #{id}"}
   end
-
-
 
   def route(%Conv{ method: "POST", path: "/bears"} = conv) do
     # %{conv | status: 201, resp_body: "Created a #{conv.params["type"]} bear named #{conv.params["name"]}!"}\
@@ -149,10 +150,17 @@ defmodule Servy2.Handler do
   # end
 
   def format_response(%Conv{} = conv) do
-    # IO.inspect(conv)
+    # """
+    # HTTP/1.1 #{Conv.full_status(conv)}\r
+    # Content-Type: text/html\r
+    # Content-Length: #{String.length(conv.resp_body)}\r
+    # \r
+    # #{conv.resp_body}
+    # """
+
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: text/html\r
+    Content-Type: #{conv.resp_content_type}\r
     Content-Length: #{String.length(conv.resp_body)}\r
     \r
     #{conv.resp_body}
