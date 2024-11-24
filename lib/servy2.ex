@@ -53,6 +53,15 @@ defmodule Servy2.Handler do
   # def route(conv, _method, path) do
   #   %{conv | status: 404, resp_body: "No #{path} here!"}
   # end
+  def route(%Conv{ method: "GET", path: "/hibernate/" <> time } = conv) do
+    time |> String.to_integer |> :timer.sleep
+
+    %{ conv | status: 200, resp_body: "Awake!" }
+  end
+
+  def route(%Conv{ method: "GET", path: "/kaboom" } = conv) do
+    raise "Kaboom!"
+  end
 
   def route(%Conv{ method: "GET", path: "/wildthings"} = conv) do
     %{conv | status: 200, resp_body: "Bears, Lions, Tigers"}
