@@ -5,6 +5,7 @@ defmodule Servy2.Handler do
 
   alias Servy.Conv
   alias Servy.BearController
+  alias Servy.VideoCam
 
   @page_path Path.expand("../pages/", __DIR__)
   # @page_path Path.expand("../pages/", File.cwd!) # File.cwd! returns current working directory which means the root project folder where the mix.exs and readme files are located.
@@ -53,6 +54,50 @@ defmodule Servy2.Handler do
   # def route(conv, _method, path) do
   #   %{conv | status: 404, resp_body: "No #{path} here!"}
   # end
+
+  def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
+    parent = self()
+    # snapshot1 = VideoCam.get_snapshot("cam-1")
+    # snapshot2 = VideoCam.get_snapshot("cam-2")
+    # snapshot3 = VideoCam.get_snapshot("cam-3")
+
+    # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    # # snapshot1 = spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    # # snapshot2 = spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    # # snapshot3 = spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+
+    # snapshot1 = receive do {:result, filename} -> filename end
+
+    # **** Blocking code example
+
+    # # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    # # snapshot1 = receive do {:result, filename} -> filename end
+
+    # # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    # # snapshot2 = receive do {:result, filename} -> filename end
+
+    # # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+    # # snapshot3 = receive do {:result, filename} -> filename end
+
+    # **** End of Blocking code example
+
+
+    # **** Non-blocking code example
+
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+
+    snapshot1 = receive do {:result, filename} -> filename end
+    snapshot2 = receive do {:result, filename} -> filename end
+    snapshot3 = receive do {:result, filename} -> filename end
+
+    snapshots = [snapshot1, snapshot2, snapshot3]
+
+    %{ conv | status: 200, resp_body: inspect snapshots}
+    # %{ conv | status: 200, resp_body: inspect snapshot1}
+  end
+
   def route(%Conv{ method: "GET", path: "/hibernate/" <> time } = conv) do
     time |> String.to_integer |> :timer.sleep
 
@@ -60,6 +105,7 @@ defmodule Servy2.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/kaboom" } = conv) do
+    IO.inspect conv
     raise "Kaboom!"
   end
 
