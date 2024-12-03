@@ -6,6 +6,8 @@ defmodule Servy2.Handler do
   alias Servy.Conv
   alias Servy.BearController
   alias Servy.VideoCam
+  # alias Servy.Fetcher
+  alias Servy.Tracker
 
   @page_path Path.expand("../pages/", __DIR__)
   # @page_path Path.expand("../pages/", File.cwd!) # File.cwd! returns current working directory which means the root project folder where the mix.exs and readme files are located.
@@ -55,8 +57,9 @@ defmodule Servy2.Handler do
   #   %{conv | status: 404, resp_body: "No #{path} here!"}
   # end
 
-  def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
-    parent = self()
+  # def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
+  def route(%Conv{ method: "GET", path: "/sensors" } = conv) do
+    # parent = self()
     # snapshot1 = VideoCam.get_snapshot("cam-1")
     # snapshot2 = VideoCam.get_snapshot("cam-2")
     # snapshot3 = VideoCam.get_snapshot("cam-3")
@@ -84,17 +87,67 @@ defmodule Servy2.Handler do
 
     # **** Non-blocking code example
 
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
-    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+    # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    # spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
 
-    snapshot1 = receive do {:result, filename} -> filename end
-    snapshot2 = receive do {:result, filename} -> filename end
-    snapshot3 = receive do {:result, filename} -> filename end
+    # snapshot1 = receive do {:result, filename} -> filename end
+    # snapshot2 = receive do {:result, filename} -> filename end
+    # snapshot3 = receive do {:result, filename} -> filename end
 
-    snapshots = [snapshot1, snapshot2, snapshot3]
+    # snapshots = [snapshot1, snapshot2, snapshot3]
 
-    %{ conv | status: 200, resp_body: inspect snapshots}
+    # Fetcher.async("cam-1")
+    # Fetcher.async("cam-2")
+    # Fetcher.async("cam-3")
+
+    # snapshot1 = Fetcher.get_result()
+    # snapshot2 = Fetcher.get_result()
+    # snapshot3 = Fetcher.get_result()
+    # snapshots = [snapshot1, snapshot2, snapshot3]
+
+    # Fetcher.async(fn -> VideoCam.get_snapshot("cam-1") end)
+    # Fetcher.async(fn -> VideoCam.get_snapshot("cam-2") end)
+    # Fetcher.async(fn -> VideoCam.get_snapshot("cam-3") end)
+    # Fetcher.async(fn -> Tracker.get_location("bigfoot") end)
+
+    # snapshot1 = Fetcher.get_result()
+    # snapshot2 = Fetcher.get_result()
+    # snapshot3 = Fetcher.get_result()
+    # where_is_bigfoot = Fetcher.get_result()
+    # snapshots = [snapshot1, snapshot2, snapshot3]
+
+    # pid1 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-1") end)
+    # pid2 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-2") end)
+    # pid3 = Fetcher.async(fn -> VideoCam.get_snapshot("cam-3") end)
+    # pid4 = Fetcher.async(fn -> Tracker.get_location("bigfoot") end)
+
+    # where_is_bigfoot = Fetcher.get_result(pid4)
+    # snapshot1 = Fetcher.get_result(pid1)
+    # snapshot2 = Fetcher.get_result(pid2)
+    # snapshot3 = Fetcher.get_result(pid3)
+
+    # snapshots = [snapshot1, snapshot2, snapshot3]
+
+    # pid4 = Fetcher.async(fn -> Tracker.get_location("bigfoot") end)
+
+    # snapshots = ["cam-1", "cam-2", "cam-3"]
+    #   |> Enum.map(&Fetcher.async(fn -> VideoCam.get_snapshot(&1) end))
+    #   |> Enum.map(&Fetcher.get_result/1)
+
+    # where_is_bigfoot = Fetcher.get_result(pid4)
+
+    task = Task.async(fn -> Tracker.get_location("bigfoot") end)
+
+    snapshots = ["cam-1", "cam-2", "cam-3"]
+      |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+      |> Enum.map(&Task.await/1)
+
+    where_is_bigfoot = Task.await(task)
+
+
+    # %{ conv | status: 200, resp_body: inspect snapshots}
+    %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
     # %{ conv | status: 200, resp_body: inspect snapshot1}
   end
 
