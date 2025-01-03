@@ -39,7 +39,6 @@ defmodule Servy.PledgeServer do
   alias Servy.GenericServer
   @name  :pledge_server
 
-  alias Servy.GenericServer
 
   # def start do
   #   IO.puts "Starting the pledge server..."
