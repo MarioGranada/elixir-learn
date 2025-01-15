@@ -5,9 +5,9 @@ defmodule Servy2.Handler do
 
   alias Servy.Conv
   alias Servy.BearController
-  alias Servy.VideoCam
+  # alias Servy.VideoCam
   # alias Servy.Fetcher
-  alias Servy.Tracker
+  # alias Servy.Tracker
 
   @page_path Path.expand("../pages/", __DIR__)
   # @page_path Path.expand("../pages/", File.cwd!) # File.cwd! returns current working directory which means the root project folder where the mix.exs and readme files are located.
@@ -137,17 +137,21 @@ defmodule Servy2.Handler do
 
     # where_is_bigfoot = Fetcher.get_result(pid4)
 
-    task = Task.async(fn -> Tracker.get_location("bigfoot") end)
+    # task = Task.async(fn -> Tracker.get_location("bigfoot") end)
 
-    snapshots = ["cam-1", "cam-2", "cam-3"]
-      |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
-      |> Enum.map(&Task.await/1)
+    # snapshots = ["cam-1", "cam-2", "cam-3"]
+    #   |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+    #   |> Enum.map(&Task.await/1)
 
-    where_is_bigfoot = Task.await(task)
+    # where_is_bigfoot = Task.await(task)
+
+    sensor_data = Servy.SensorServer.get_sensor_data()
+
 
 
     # %{ conv | status: 200, resp_body: inspect snapshots}
-    %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
+    # %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
+    %{ conv | status: 200, resp_body: inspect sensor_data}
     # %{ conv | status: 200, resp_body: inspect snapshot1}
   end
 
