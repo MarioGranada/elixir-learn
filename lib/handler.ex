@@ -110,9 +110,7 @@ defmodule ServyHandler do
     User-Agent: ExampleBrowser/1.0\r
     Accept: */*\r
     Content-Type: application/x-www-form-urlencoded\r
-    Content-Length: 21\r
-    \r
-    name=Baloo&type=Brown\r
+    Content-Length: 21\r\n\r\nname=Baloo&type=Brown\r
     """
     # IO.puts(Servy2.handle(request12))
     IO.puts(Handler.handle(request12))

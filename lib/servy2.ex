@@ -155,6 +155,12 @@ defmodule Servy2.Handler do
     # %{ conv | status: 200, resp_body: inspect snapshot1}
   end
 
+  def route(%Conv{method: "GET", path: "/404s"} = conv) do
+    # Sends the pledge to the external service and caches it
+    %{ conv | status: 200, resp_body: "yooooo 404s"}
+    # Servy.PledgeController.create(conv, conv.params)
+  end
+
   def route(%Conv{method: "POST", path: "/pledges"} = conv) do
     # Sends the pledge to the external service and caches it
     Servy.PledgeController.create(conv, conv.params)
