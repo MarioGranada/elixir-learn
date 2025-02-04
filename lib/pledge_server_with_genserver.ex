@@ -7,9 +7,16 @@ defmodule Servy.PledgeServerWithGenServer do
     defstruct cache_size: 3, pledges: []
   end
 
-  def start do
+  # Without Supervisor
+  # def start do
+  #   IO.puts "Starting the pledge server..."
+  #   GenServer.start(__MODULE__, %State{} , name: @name)
+  # end
+
+  # With Supervisor
+  def start_link(_arg) do
     IO.puts "Starting the pledge server..."
-    GenServer.start(__MODULE__, %State{} , name: @name)
+    GenServer.start_link(__MODULE__, %State{} , name: @name)
   end
 
   def create_pledge(name, amount) do

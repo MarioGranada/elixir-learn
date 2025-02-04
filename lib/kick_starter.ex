@@ -1,9 +1,16 @@
 defmodule Servy.KickStarter do
   use GenServer
 
-  def start do
+  # Without Supervisor
+  # def start do
+  #   IO.puts "Starting the kick starter..."
+  #   GenServer.start(__MODULE__, :ok, name: __MODULE__)
+  # end
+
+  # With Supervisor
+  def start_link(_arg) do
     IO.puts "Starting the kick starter..."
-    GenServer.start(__MODULE__, :ok, name: __MODULE__)
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   # Exit all processes on exit only one
