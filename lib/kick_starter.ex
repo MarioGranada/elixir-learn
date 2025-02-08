@@ -9,7 +9,7 @@ defmodule Servy.KickStarter do
 
   # With Supervisor
   def start_link(_arg) do
-    IO.puts "Starting the kick starter..."
+    IO.puts("Starting the kick starter...")
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
@@ -39,8 +39,8 @@ defmodule Servy.KickStarter do
     {:ok, server_pid}
   end
 
-  def handle_info( {:EXIT, _pid, reason}, _state) do
-    IO.puts "Http server exited (#{inspect reason})"
+  def handle_info({:EXIT, _pid, reason}, _state) do
+    IO.puts("Http server exited (#{inspect(reason)})")
     server_pid = start_server()
     {:noreply, server_pid}
   end
@@ -56,12 +56,13 @@ defmodule Servy.KickStarter do
 
   # start_server with spawn_link
   defp start_server do
-    IO.puts "Starting the HTTP server..."
-    server_pid = spawn_link(Servy.HttpServer, :start, [4000])
+    IO.puts("Starting the HTTP server...")
+    # server_pid = spawn_link(Servy.HttpServer, :start, [4000])
+    port = Application.get_env(:servy, :port)
+    server_pid = spawn_link(Servy.HttpServer, :start, [port])
     # server_pid = spawn(Servy.HttpServer, :start, [4000])
     # Process.link(server_pid)
     Process.register(server_pid, :http_server)
     server_pid
   end
-
 end
